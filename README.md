@@ -38,20 +38,7 @@ The Inventory Management System is a web application designed to help businesses
 ## Contributing
 Contributions are welcome! If you have suggestions for improvements or new features, please create an issue or submit a pull request.
 
-## License
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
 ## Acknowledgments
 - Thank you to everyone who contributed to this project and provided support.
 - Inspiration from various open-source projects.
 
-```
-
-### Customization Tips
-- **Overview**: Modify the overview section to better fit your project’s goals and functionality.
-- **Features**: Add or remove features based on your implementation.
-- **Technologies Used**: List any other technologies or libraries that you are using in the project.
-- **Installation**: Update the installation steps based on how your project should be set up.
-- **Usage**: Provide more detailed instructions if necessary, especially if there are specific steps users need to follow.
-
-Feel free to modify any part of this template to suit your project's specific needs! If you have any additional sections you'd like to include or need further assistance, let me know!
