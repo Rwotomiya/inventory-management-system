@@ -3,15 +3,13 @@ include '../config.php'; // Include your database configuration
 
 // Initialize variables
 $product_id = "";
-$supplier_name = "";
+$supplier_id = "";
 $quantity = 0;
-$unit_price = 0.0;
-$total_price = 0.0;
 $errors = [];
 
 // Fetch existing products
 try {
-    $products = $conn->query("SELECT id, product_name FROM products")->fetchAll(PDO::FETCH_ASSOC);
+    $products = $conn->query("SELECT id, product_name, price FROM products")->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     echo "Error fetching products: " . $e->getMessage();
 }
@@ -24,36 +22,22 @@ try {
 }
 
 // Handle form submission
-// Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get form inputs
     $product_id = intval($_POST['product_id']);
-    $supplier_id = intval($_POST['supplier_id']); // Ensure you're getting the supplier ID here
+    $supplier_id = intval($_POST['supplier_id']);
     $quantity = intval($_POST['quantity']);
 
-    // Fetch the selected product's unit price
+    // Fetch the selected product's price
     $stmt = $conn->prepare("SELECT price FROM products WHERE id = :product_id");
     $stmt->bindParam(':product_id', $product_id);
     $stmt->execute();
     $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($product) {
-        $unit_price = floatval($product['price']);
-        $total_price = $quantity * $unit_price;
+        $total_price = $quantity * floatval($product['price']);
     } else {
         $errors[] = "Selected product not found.";
-    }
-
-    // Fetch the selected supplier's name
-    $stmt = $conn->prepare("SELECT supplier_name FROM suppliers WHERE id = :supplier_id");
-    $stmt->bindParam(':supplier_id', $supplier_id);
-    $stmt->execute();
-    $supplier = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($supplier) {
-        $supplier_name = $supplier['supplier_name'];
-    } else {
-        $errors[] = "Selected supplier not found.";
     }
 
     // Validate inputs
@@ -64,12 +48,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // If no errors, insert into database
     if (count($errors) == 0) {
         try {
-            $stmt = $conn->prepare("INSERT INTO sales (product_id, supplier_name, quantity, unit_price, total_price) VALUES (:product_id, :supplier_name, :quantity, :unit_price, :total_price)");
+            $stmt = $conn->prepare("INSERT INTO sales (product_id, supplier_id, quantity) VALUES (:product_id, :supplier_id, :quantity)");
             $stmt->bindParam(':product_id', $product_id);
-            $stmt->bindParam(':supplier_name', $supplier_name); // Insert supplier_name, not supplier_id
+            $stmt->bindParam(':supplier_id', $supplier_id);
             $stmt->bindParam(':quantity', $quantity);
-            $stmt->bindParam(':unit_price', $unit_price);
-            $stmt->bindParam(':total_price', $total_price);
             $stmt->execute();
 
             // Redirect to sales page after successful insertion
@@ -80,17 +62,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
-
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Sale</title>
-    <link rel="stylesheet" href="../styles.css"> <!-- Include your CSS file -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -201,12 +177,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <?php endforeach; ?>
             </select>
 
-
             <label for="quantity">Quantity:</label>
             <input type="number" name="quantity" id="quantity" required min="1">
-
-            <label for="sale_date">Sale Date:</label>
-            <input type="date" name="sale_date" id="sale_date" value="<?php echo date('Y-m-d'); ?>" required>
 
             <button type="submit">Add Sale</button>
         </form>
@@ -216,3 +188,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </body>
 </html>
+

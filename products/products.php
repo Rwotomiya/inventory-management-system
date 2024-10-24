@@ -158,7 +158,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <td><?= $product['id'] ?></td>
                         <td><?= $product['product_name'] ?></td>
                         <td><?= $product['price'] ?></td>
-                        <td><?= $product['stock'] ?></td>
+                        <td><?= $product['stock_quantity'] ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>

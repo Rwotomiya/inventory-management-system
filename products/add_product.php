@@ -2,12 +2,14 @@
 require '../config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Correct variable name usage
     $product_name = $_POST['product_name'];
     $price = $_POST['price'];
-    $stock = $_POST['stock'];
+    $stock = $_POST['stock'];  // Change stock_quantity to stock
 
-    $stmt = $conn->prepare("INSERT INTO products (product_name, price, stock) VALUES (?, ?, ?)");
-    $stmt->execute([$product_name, $price, $stock]);
+    // Correct variable used in the execute statement
+    $stmt = $conn->prepare("INSERT INTO products (product_name, price, stock_quantity) VALUES (?, ?, ?)");
+    $stmt->execute([$product_name, $price, $stock]);  // Use $stock instead of $stock_quantity
 
     header('Location: products.php');
     exit;
@@ -42,7 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            
         }
 
         label {
@@ -103,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="number" step="0.01" name="price" id="price" required>
 
             <b><label for="stock">Stock:</label></b>
-            <input type="number" name="stock" id="stock" required>
+            <input type="number" name="stock" id="stock_quantity" required> <!-- Fixed name to "stock" -->
 
             <button align="center" type="submit">Add Product</button>
         </form>

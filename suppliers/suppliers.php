@@ -175,7 +175,7 @@ $suppliers = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <tr>
                     <td><?= htmlspecialchars($supplier['id']) ?></td>
                     <td><?= htmlspecialchars($supplier['supplier_name']) ?></td>
-                    <td><?= htmlspecialchars($supplier['contact']) ?></td>
+                    <td><?= htmlspecialchars($supplier['contact_info']) ?></td>
                 </tr>
             <?php endforeach; ?>
         <?php endif; ?>

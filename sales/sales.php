@@ -3,9 +3,10 @@ require '../config.php';
 
 // Check if a search term is set and create the SQL query accordingly
 $search = isset($_GET['search']) ? $_GET['search'] : '';
-$query = "SELECT sales.id, products.product_name AS product, sales.quantity, sales.sale_date 
+$query = "SELECT sales.id, products.product_name AS product, sales.quantity, sales.sale_date, suppliers.supplier_name AS supplier
           FROM sales
-          JOIN products ON sales.product_id = products.id";
+          JOIN products ON sales.product_id = products.id
+          JOIN suppliers ON sales.supplier_id = suppliers.id"; // Join the suppliers table
 
 // If a search term is provided, modify the query to filter by product name
 if (!empty($search)) {
@@ -156,30 +157,32 @@ $sales = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Sale Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (count($sales) > 0): ?>
-                <?php foreach ($sales as $sale): ?>
-                    <tr>
-                        <td><?= $sale['id'] ?></td>
-                        <td><?= $sale['product'] ?></td>
-                        <td><?= $sale['quantity'] ?></td>
-                        <td><?= $sale['sale_date'] ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Product</th>
+            <th>Supplier</th> <!-- Added Supplier column header -->
+            <th>Quantity</th>
+            <th>Sale Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php if (count($sales) > 0): ?>
+            <?php foreach ($sales as $sale): ?>
                 <tr>
-                    <td colspan="4">No sales found for "<?= htmlspecialchars($search) ?>"</td>
+                    <td><?= $sale['id'] ?></td>
+                    <td><?= $sale['product'] ?></td>
+                    <td><?= $sale['supplier'] ?></td> <!-- Added Supplier column data -->
+                    <td><?= $sale['quantity'] ?></td>
+                    <td><?= $sale['sale_date'] ?></td>
                 </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="5">No sales found for "<?= htmlspecialchars($search) ?>"</td>
+            </tr>
+        <?php endif; ?>
+    </tbody>
+</table>
 </body>
 </html>
