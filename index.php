@@ -1,5 +1,16 @@
 <?php
+session_start(); // Start the session
 require 'config.php';
+
+// Check if the user is logged in
+if (isset($_SESSION['username'])) {
+    // Display welcome message with username
+    // echo "<h1>Welcome, " . htmlspecialchars($_SESSION['username']) . "</h1>";
+} else {
+    // Redirect to login page if not logged in
+    header("Location: login.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -68,7 +79,14 @@ require 'config.php';
 </head>
 <body>
     <div class="container">
+        <?php
+        // Display welcome message with username
+            if (isset($_SESSION['username'])) {
+                echo "<h2>Hey " . htmlspecialchars($_SESSION['username']) . "</h2>";
+            }
+        ?>
         <h1>Welcome to the Inventory Management System</h1>
+        
         <div class="button-container">
             <a href="products/products.php" class="btn">Manage Products</a>
             <a href="suppliers/suppliers.php" class="btn">Manage Suppliers</a>
@@ -80,4 +98,3 @@ require 'config.php';
     </div>
 </body>
 </html>
-
