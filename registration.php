@@ -3,21 +3,49 @@
 require 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
-    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);  // Hash the password for security
+    $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
+    $confirm_password = trim($_POST['confirm_password']);
 
-    // Insert the user into the database
-    $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
-    $stmt->bindParam(':username', $username);
-    $stmt->bindParam(':password', $password);
+    // Check if passwords match
+    if ($password !== $confirm_password) {
+        echo "<script>alert('Passwords do not match!'); window.history.back();</script>";
+        exit;
+    }
 
-    if ($stmt->execute()) {
-        echo "<script>alert('Registration successful!'); window.location.href = 'login.php';</script>";
-    } else {
-        echo "Registration failed: " . $stmt->errorInfo()[2];
+    // Hash the password for security
+    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+
+    try {
+        // Check for duplicate username or email
+        $checkStmt = $conn->prepare("SELECT * FROM users WHERE username = :username OR email = :email");
+        $checkStmt->bindParam(':username', $username);
+        $checkStmt->bindParam(':email', $email);
+        $checkStmt->execute();
+
+        if ($checkStmt->rowCount() > 0) {
+            echo "<script>alert('Username or email already exists! Please choose another.'); window.history.back();</script>";
+            exit;
+        }
+
+        // Insert the user into the database
+        $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (:username, :email, :password)");
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':password', $hashed_password);
+
+        if ($stmt->execute()) {
+            echo "<script>alert('Registration successful!'); window.location.href = 'login.php';</script>";
+        } else {
+            echo "Registration failed: " . $stmt->errorInfo()[2];
+        }
+    } catch (PDOException $e) {
+        echo "Database error: " . $e->getMessage();
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
