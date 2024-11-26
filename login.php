@@ -1,17 +1,27 @@
 <?php
+// Start the session
 session_start();
+
+// Include the database configuration file
 require 'config.php';
 
+// Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Retrieve the username from the POST data
     $username = $_POST['username'];
+    // Retrieve the password from the POST data
     $password = $_POST['password'];
 
-    // Check if the user exists
+    // Prepare a statement to check if the user exists
     $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+    // Execute the prepared statement with the username
     $stmt->execute([$username]);
+    // Fetch the user data
     $user = $stmt->fetch();
 
+    // Check if the user exists
     if ($user) {
+        // Verify the password
         if (password_verify($password, $user['password'])) {
             // Start a session and store the user's ID and name
             $_SESSION['user_id'] = $user['id'];
@@ -21,9 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: index.php");
             exit;
         } else {
+            // Output an error message if password verification fails
             echo "Password verification failed.";
         }
     } else {
+        // Output an error message if the user is not found
         echo "User not found.";
     }
 }
@@ -42,9 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin: 0;
             font-family: Arial, sans-serif;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f4f4f4;
+            justify-content: center;  /* Horizontally centers the content */
+            align-items: center;      /* Vertically centers the content */
+            background-color: #f4f4f4; /* Light background color */
         }
 
         .container {
@@ -80,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         button {
             width: 100%;
             padding: 10px;
-            background-color: #28a745;
+            background-color: #28a745; /* Button color */
             color: white;
             border: none;
             border-radius: 5px;
@@ -89,21 +101,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         button:hover {
-            background-color: #218838;
+            background-color: #218838; /* Darker button color on hover */
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Login</h2>
+        <!-- Display an error message if there is an invalid username or password -->
         <?php if (isset($_GET['error'])): ?>
             <p style="color: red;">Invalid username or password!</p>
         <?php endif; ?>
+        <!-- Login form -->
         <form action="login.php" method="POST">
+            <!-- Username input field -->
             <label for="username">Username:</label>
             <input type="text" name="username" id="username" required><br>
+            <!-- Password input field -->
             <label for="password">Password:</label>
             <input type="password" name="password" id="password" required><br>
+            <!-- Submit button -->
             <button type="submit">Login</button>
         </form>
     </div>

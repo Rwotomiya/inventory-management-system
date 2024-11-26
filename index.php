@@ -1,5 +1,8 @@
 <?php
-session_start(); // Start the session
+// Start the session
+session_start();
+
+// Include the database configuration file
 require 'config.php';
 
 // Check if the user is logged in
@@ -81,18 +84,24 @@ if (isset($_SESSION['username'])) {
     <div class="container">
         <?php
         // Display welcome message with username
-            if (isset($_SESSION['username'])) {
-                echo "<h2>Hey " . htmlspecialchars($_SESSION['username']) . "</h2>";
-            }
+        if (isset($_SESSION['username'])) {
+            echo "<h2>Hey " . htmlspecialchars($_SESSION['username']) . "</h2>";
+        }
         ?>
         <h1>Welcome to the Inventory Management System</h1>
-        
+
         <div class="button-container">
+            <!-- Link to manage products -->
             <a href="products/products.php" class="btn">Manage Products</a>
+            <!-- Link to manage suppliers -->
             <a href="suppliers/suppliers.php" class="btn">Manage Suppliers</a>
+            <!-- Link to manage orders -->
             <a href="orders/orders.php" class="btn">Manage Orders</a>
+            <!-- Link to manage sales -->
             <a href="sales/sales.php" class="btn">Manage Sales</a>
+            <!-- Link to register a new user -->
             <a href="registration.php" class="btn">Register User</a>
+            <!-- Link to logout -->
             <a href="logout.php" class="btn">Logout</a>
         </div>
     </div>

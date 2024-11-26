@@ -1,15 +1,22 @@
+
 <?php
 // Include the database configuration file
 require 'config.php';
 
+// Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Trim and retrieve the username from the POST data
     $username = trim($_POST['username']);
+    // Trim and retrieve the email from the POST data
     $email = trim($_POST['email']);
+    // Trim and retrieve the password from the POST data
     $password = trim($_POST['password']);
+    // Trim and retrieve the confirm password from the POST data
     $confirm_password = trim($_POST['confirm_password']);
 
     // Check if passwords match
     if ($password !== $confirm_password) {
+        // Alert the user that passwords do not match and go back to the previous page
         echo "<script>alert('Passwords do not match!'); window.history.back();</script>";
         exit;
     }
@@ -18,34 +25,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
     try {
-        // Check for duplicate username or email
+        // Prepare a statement to check for duplicate username or email
         $checkStmt = $conn->prepare("SELECT * FROM users WHERE username = :username OR email = :email");
+        // Bind the username parameter to the prepared statement
         $checkStmt->bindParam(':username', $username);
+        // Bind the email parameter to the prepared statement
         $checkStmt->bindParam(':email', $email);
+        // Execute the prepared statement
         $checkStmt->execute();
 
+        // Check if any rows are returned (indicating a duplicate username or email)
         if ($checkStmt->rowCount() > 0) {
+            // Alert the user that the username or email already exists and go back to the previous page
             echo "<script>alert('Username or email already exists! Please choose another.'); window.history.back();</script>";
             exit;
         }
 
-        // Insert the user into the database
+        // Prepare a statement to insert the new user into the database
         $stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (:username, :email, :password)");
+        // Bind the username parameter to the prepared statement
         $stmt->bindParam(':username', $username);
+        // Bind the email parameter to the prepared statement
         $stmt->bindParam(':email', $email);
+        // Bind the hashed password parameter to the prepared statement
         $stmt->bindParam(':password', $hashed_password);
 
+        // Execute the prepared statement
         if ($stmt->execute()) {
+            // Alert the user that registration was successful and redirect to the login page
             echo "<script>alert('Registration successful!'); window.location.href = 'login.php';</script>";
         } else {
+            // Output the error message if registration fails
             echo "Registration failed: " . $stmt->errorInfo()[2];
         }
     } catch (PDOException $e) {
+        // Output the database error message
         echo "Database error: " . $e->getMessage();
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -113,19 +131,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <div class="container">
         <h2>Register</h2>
+        <!-- Registration form -->
         <form action="registration.php" method="POST">
+            <!-- Username input field -->
             <label for="username">Username:</label>
             <input type="text" name="username" id="username" required><br>
-            
+
+            <!-- Email input field -->
             <label for="email">Email:</label>
             <input type="email" name="email" id="email" required><br>
 
+            <!-- Password input field -->
             <label for="password">Password:</label>
             <input type="password" name="password" id="password" required><br>
 
+            <!-- Confirm password input field -->
             <label for="confirm_password">Confirm Password:</label>
             <input type="password" name="confirm_password" id="confirm_password" required><br>
 
+            <!-- Submit button -->
             <button type="submit">Register</button>
         </form>
     </div>
